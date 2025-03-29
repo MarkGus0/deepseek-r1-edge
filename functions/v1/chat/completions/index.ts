@@ -102,6 +102,18 @@ Snippet: ${snippet}
 export async function onRequest({ request, params, env }: any) {
   request.headers.delete('accept-encoding');
 
+  // Verify API key
+  const apiKey = request.headers.get('x-api-key');
+  if (apiKey !== '123456') {
+    return new Response(JSON.stringify({ error: 'Unauthorized - Invalid API key' }), {
+      status: 401,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+      },
+    });
+  }
+  
   if (request.method === 'OPTIONS') {
     return new Response(null, {
       headers: {
